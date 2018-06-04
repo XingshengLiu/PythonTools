@@ -125,7 +125,7 @@ def readExcelFileContent():
 def main():
     # readFileNameAndRename()
     readExcelFileContent()
-    print("test是否能够上传")
+
 
 
 if __name__ == '__main__':
