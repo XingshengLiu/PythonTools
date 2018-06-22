@@ -10,3 +10,7 @@
 **randomChooseTool 用于从生成的问法中随机筛选指定条数的数据，生成xls文件，用于测试语义识别率**
 
   *用法*：把生成xlsx问法文件，放入和工具同目录，运行工具后，会生成xlsx对应数目的xls文件，xls文件即随机筛选的问法
+
+**chooseFilesTool 用于根据表格中的文件筛选pcm文件，或者根据pcm文件重新生成一张表格**
+
+  *用法*：把需要筛选的Excel和pcm文件放到同级目录中，运行工具，选1是根据excel挑选出相应的pcm文件，并且移动至test目录下，test目录需要手动建好，注意表格内容第二列文件名需要带.pcm后缀；选择2，根据pcm文件生成新的excel文件，原始的excel名需要修改为original.xls，第二列文件名同样需要带有.pcm后缀，运行后，会生成chosen.xls，即为重新筛选的excel文件
