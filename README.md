@@ -14,3 +14,7 @@
 **chooseFilesTool 用于根据表格中的文件筛选pcm文件，或者根据pcm文件重新生成一张表格**
 
   *用法*：把需要筛选的Excel和pcm文件放到同级目录中，运行工具，选1是根据excel挑选出相应的pcm文件，并且移动至test目录下，test目录需要手动建好，注意表格内容第二列文件名需要带.pcm后缀；选择2，根据pcm文件生成新的excel文件，原始的excel名需要修改为original.xls，第二列文件名同样需要带有.pcm后缀，运行后，会生成chosen.xls，即为重新筛选的excel文件
+
+**changeSkillIdTool 用于把生成问法中的中文技能统一替换为数字技能Id**
+
+  *用法*：把需要重新填写技能Id的excel文件放到和工具的同级目录下，excel文件格式三列，data，技能，意图名，运行工具，选择对应的技能数字即可

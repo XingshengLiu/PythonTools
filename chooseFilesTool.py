@@ -35,7 +35,7 @@ def readExcelFile():
         wavFileName = test.cell_value(row, 1)
         wavfileNameList.append(wavFileName)
     for wavfile in wavfileNameList:
-        shutil.move(os.getcwd() + '\\' + wavfile , os.getcwd() + '\\' + "test")
+        shutil.move(os.getcwd() + '\\' + str(wavfile), os.getcwd() + '\\' + "test")
 
 
 def readPCMFile():
