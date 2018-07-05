@@ -1,48 +1,19 @@
-import os, xlrd, xlsxwriter, xlwt
+import os, xlrd, xlwt
 
 
 class FileContent:
-
-    def getAttrFileName(self):
-        return self.filename
-
-    def setAttrFileName(self, filename):
-        self.filename = filename
-
-    def getAttrContent(self):
-        return self.content
-
-    def setAttrContent(self, content):
-        self.content = content
+    fileName = ''
+    content = ''
 
 
 class FileRename:
-    def getAttrOrigianlName(self):
-        return self.originalName
-
-    def setAttrOriginalName(self, originalName):
-        self.originalName = originalName
-
-    def getChangedName(self):
-        return self.changedName
-
-    def setChangedName(self, mchangedName):
-        self.changedName = mchangedName
+    originalName = ''
+    changedName = ''
 
 
 class FileTidyName:
-
-    def getAttrNewlName(self):
-        return self.newName
-
-    def setAttrNewName(self, newName):
-        self.newName = newName
-
-    def getContent(self):
-        return self.content
-
-    def setContent(self, content):
-        self.content = content
+    newName = ''
+    content = ''
 
 
 class MatchBean:
@@ -99,30 +70,42 @@ def readExcelFileContent():
     fileContentList = []
     fileRenameList = []
     tidyList = []
-    contentdata = xlrd.open_workbook(os.getcwd() + '\\content.xls')
+    allfileList = os.listdir(os.getcwd())
+    for name in allfileList:
+        if name.endswith('xlsx'):
+            excelName = name
+            break
+        else:
+            continue
+    contentdata = xlrd.open_workbook(os.getcwd() + '\\' + excelName)
     contenttest = contentdata.sheets()[0]
     rows = contenttest.nrows
     for row in range(1, rows):
         filecontent = FileContent()
-        filecontent.setAttrContent(contenttest.cell_value(row, 0))
-        filecontent.setAttrFileName(contenttest.cell_value(row, 1))
+        fileName = contenttest.cell_value(row, 4)
+        start = fileName.find('F:')
+        virtualName = fileName[start:]
+        realName = virtualName.replace(':', '_')
+        filecontent.fileName = realName
+        filecontent.content = contenttest.cell_value(row, 5)
         fileContentList.append(filecontent)
     print("内容长度：", len(fileContentList))
+    print(fileContentList[0].fileName, fileContentList[0].content)
     changedNamedata = xlrd.open_workbook(os.getcwd() + '\\changed.xls')
     changedtest = changedNamedata.sheets()[0]
     rows = changedtest.nrows
     for nrow in range(1, rows):
         filerename = FileRename()
-        filerename.setAttrOriginalName(changedtest.cell_value(nrow, 0))
-        filerename.setChangedName(changedtest.cell_value(nrow, 1))
+        filerename.originalName = changedtest.cell_value(nrow, 0)
+        filerename.changedName = changedtest.cell_value(nrow, 1)
         fileRenameList.append(filerename)
     print("name内容长度：", len(fileRenameList))
     for contentitem in fileContentList:
         for nameitem in fileRenameList:
-            if contentitem.getAttrFileName() == nameitem.getAttrOrigianlName():
+            if contentitem.fileName == nameitem.originalName:
                 filetidyname = FileTidyName()
-                filetidyname.setAttrNewName(nameitem.getChangedName())
-                filetidyname.setContent(contentitem.getAttrContent())
+                filetidyname.newName = nameitem.changedName
+                filetidyname.content = contentitem.content
                 tidyList.append(filetidyname)
                 break
             else:
@@ -133,12 +116,12 @@ def readExcelFileContent():
         workbook = xlwt.Workbook(encoding='utf-8')
         ws = workbook.add_sheet('Sheet1', cell_overwrite_ok=True)
         ws.write(0, 0, 'content')
-        ws.write(0, 1, 'filename')
+        ws.write(0, 1, 'fileName')
         ws.write(0, 2, 'id')
         ws.write(0, 3, 'name')
         for resultitem in tidyList:
-            ws.write(i, 0, resultitem.getContent())
-            ws.write(i, 1, resultitem.getAttrNewlName())
+            ws.write(i, 0, resultitem.content)
+            ws.write(i, 1, resultitem.newName)
             ws.write(i, 2, ' ')
             ws.write(i, 3, ' ')
             i = i + 1
@@ -153,6 +136,8 @@ def readExcelFileContent():
 def main():
     readFileNameAndRename()
     readExcelFileContent()
+    # 删除临时生成的changed文件
+    os.remove(os.getcwd() + '\\changed.xls')
 
 
 if __name__ == '__main__':
