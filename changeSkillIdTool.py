@@ -16,7 +16,7 @@ def chooseFilesAndCopyToAnotherDir():
 
 def changeId():
     originalList = []
-    num = input('选择技能：\n 1,变字 2,查字 3,古诗冲突 4,词语 5,古诗二版 6,句子 7,控制命令 8,拼音 9,生字 10,同类型词语 11,同类型的字 12,闲聊 13,组词 14,作文 15,特殊句式\n')
+    num = input('选择技能：\n 1,变字 2,查字 3,古诗冲突 4,词语 5,古诗二版 6,句子 7,控制命令 8,拼音 9,生字 10,同类型词语 11,同类型的字 12,闲聊 13,组词 14,作文 15,特殊句式 16,翻译web版 17,英文 18,英文字母 19, 闲聊2\n')
     if num == '1':
         id = '2018042000000028'
     elif num == '2':
@@ -45,8 +45,16 @@ def changeId():
         id = '2018042000000026'
     elif num == '14':
         id = '2018030800000046'
-    else:
+    elif num == '15':
         id = '2018052200000070'
+    elif num == '16':
+        id = '2018030800000010'
+    elif num == '17':
+        id = '2018082500000008'
+    elif num == '18':
+        id = '2018082700000001'
+    else:
+        id = '2018032000000039'
     path = os.getcwd()
     excelList = chooseFilesAndCopyToAnotherDir()
     for file in excelList:

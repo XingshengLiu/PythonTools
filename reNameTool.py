@@ -62,10 +62,10 @@ def readExcelFileContent():
     for row in range(1, rows):
         filecontent = FileContent()
         fileName = contenttest.cell_value(row, 4)
-        start = fileName.find('F:')
-        virtualName = fileName[start:]
-        realName = virtualName.replace(':', '_')
-        filecontent.fileName = realName
+        # start = fileName.find('F:')
+        # virtualName = fileName[start:]
+        # realName = virtualName.replace(':', '_')
+        filecontent.fileName = fileName
         filecontent.content = contenttest.cell_value(row, 5)
         fileContentList.append(filecontent)
     print("内容长度：", len(fileContentList))
