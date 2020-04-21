@@ -3,6 +3,8 @@
 # @Date  : 2019/1/7
 # @Desc  : 语音收集demo 已发布的项目
 import requests, time, xlsxwriter, os
+import getopt
+import sys
 
 # DOMAIN = 'http://test.eebbk.net'
 Item = '/voice-material-warehouse'
@@ -144,8 +146,9 @@ def main():
     # getFeedbackReasons()
     # uploadPointQuestionVoiceBaseData()
     # testInterface()
-    searchKnowledgePoint()
+    # searchKnowledgePoint()
     # judgeHealth()
+    test()
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@
 from wordcloud import WordCloud
 import jieba
 
-data = "肉嘟嘟，好看，漂亮，美丽，温柔，下巴"
+data = "beautiful,nice,lovely"
 cutdata = jieba.cut(data, cut_all=True)
 word = " ".join(cutdata)
 

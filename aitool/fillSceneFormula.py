@@ -64,7 +64,7 @@ def writeExcelContent(fileName, chosenList):
 
 
 def main():
-    fileName = '1568968217_步步高自研'
+    fileName = '1572838853_步步高自研'
     noSceneList = readExcelContent(fileName, NOSCENE)
     sceneList = readExcelContent('已填充', COMPLETE)
     resultList = compareAndWrapper(noSceneList, sceneList)

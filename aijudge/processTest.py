@@ -2,7 +2,7 @@
 # @Author: LiuXingsheng
 # @Date  : 2019/9/11
 # @Desc  : 智能诊断与推荐接口测试
-import random
+import random_pic
 import requests
 import demjson
 
@@ -11,12 +11,12 @@ NAME_ITEM = '/ai-diagnosis-app'
 URL_DETAIL = '0'
 URL_SIMILAR = '1'
 
-TEACHER = 'lxs'
+TEACHER = '刘1'
 
 
 def getHeader():
     return {'machineId': '700S519040201', 'deviceModel': 'S5', 'deviceOSVersion': 'V1.0.0_190309',
-            'accountId': 'lxs_789'}
+            'accountId': 'lxs_135'}
 
 
 def getAllDiagnoseTopics(subCpList):
@@ -80,7 +80,7 @@ def reportedAnswerResults(comprehensiveList):
     answersList = []
     strIdList = str(idList).replace('[', '').replace(']', '').replace('\'', '').replace(' ', '')
     for i in range(len(idList)):
-        answersList.append(random.randint(0, 1))
+        answersList.append(random_pic.randint(0, 1))
     strAnswerList = ''.join(str(answersList).replace('[', '').replace(']', '').split())
     url = TEST_DOMAIN + NAME_ITEM + '/app/diagnosis/reportedAnswerResults'
     param = {
@@ -106,9 +106,9 @@ def submitAnswerInfo(comprehensiveList, sectionId, sectionName):
     UserAnswerTimeList = []
     usedTotalTime = 0
     for i in range(len(idList)):
-        answersList.append(random.randint(0, 1))
-        userItemList.append(random.randint(1, 4))
-        UserAnswerTimeList.append(random.randint(5, 30))
+        answersList.append(random_pic.randint(0, 1))
+        userItemList.append(random_pic.randint(1, 4))
+        UserAnswerTimeList.append(random_pic.randint(5, 30))
     userAnsersList = wrapperUserAnswer(userItemList)
     for i in UserAnswerTimeList:
         usedTotalTime += i
@@ -149,9 +149,11 @@ def getFatherMenu():
     menuIdList = []
     url = TEST_DOMAIN + NAME_ITEM + '/app/diagnosis/getFatherMenu'
     result = requests.get(url=url, headers=getHeader())
+    if result.status_code != requests.codes.ok:
+        print(result.status_code)
+        return []
     content = result.content.decode('utf-8')
     contentobj = demjson.decode(content)
-
     if contentobj['data'] is not None:
         for item in contentobj['data']:
             for item_new in item['subMenu']:
@@ -169,6 +171,9 @@ def getMenuByFatherMenuId(menuIdList):
     for item in menuIdList:
         param = {'fatherMenuId': str(item)}
         result = requests.get(url=url, params=param, headers=getHeader())
+        if result.status_code != requests.codes.ok:
+            print(result.status_code)
+            return []
         objecontent = demjson.decode(result.text)
         print(objecontent)
         if objecontent['data'] is not None:
@@ -237,7 +242,7 @@ def coupleBackTopic(practiceList):
     print('---------------------提交题目反馈--------------------')
     url = TEST_DOMAIN + NAME_ITEM + '/app/diagnosis/coupleBackTopic'
     for topic in practiceList:
-        param = {'topicId': str(topic), 'coupleBacks': random.randint(1, 6),
+        param = {'topicId': str(topic), 'coupleBacks': random_pic.randint(1, 6),
                  'coupleBackDesc': '这是接口生成的反馈描述', 'contactInfo': '456789'}
         result = requests.post(url=url, params=param, headers=getHeader())
         print('提交反馈 参数是：{0}，返回结果是：{1}'.format(param, result.text))
@@ -315,7 +320,7 @@ def getDiagnoseResultByQuestion(comprehensiveList):
     nqt = comprehensiveList[1]
     answersList = []
     for i in range(len(idList)):
-        answersList.append(random.randint(0, 1))
+        answersList.append(random_pic.randint(0, 1))
     strAnswerList = str(answersList)
     trueStrAnswerList = ''.join(strAnswerList.split())
     url = TEST_DOMAIN + '/recommend-system-api/diagnose/api/getDiagnoseResultByQuestion'
@@ -341,18 +346,73 @@ def getDiagnoseSuit(sectionCp):
     print('*******************************************************')
 
 
+def specialTest(subCoupleList):
+    urlGetSectionList = 'http://172.28.162.21:9011/diagnosis/test/getSectionList'
+    urlGetDiaResult = 'http://172.28.162.21:9011/diagnosis/test/getDiagnoseResult'
+    result = requests.post(url=urlGetSectionList, params={'sectionId': 1})
+    if result.status_code != requests.codes.ok:
+        print(result.status_code)
+        return
+    objData = demjson.decode(result.text)
+    print(len(objData['data']['knowledgeList']))
+    knowledgeHas = objData['data']['questionStateT']
+    for knowledge in knowledgeHas:
+        print(knowledge)
+        result = requests.post(url=urlGetDiaResult, params={'sectionId': '1', 'userState': knowledge})
+        print(result.text)
+    for itemCp in subCoupleList:
+        sectionid = itemCp[0]
+        result = requests.post(url=urlGetSectionList, params={'sectionId': sectionid})
+        if result.status_code != requests.codes.ok:
+            print(result.status_code)
+            return
+        objData = demjson.decode(result.text)
+        knowledgeHas = objData['data']['questionStateT']
+        for knowledge in knowledgeHas:
+            print(knowledge)
+            result = requests.post(url=urlGetDiaResult, params={'sectionId': sectionid, 'userState': knowledge})
+            print(result.text)
+
+
+def test():
+    numberList = [1, 2, 3, 4, 5]
+    numberTuple = (1, 2, 3, 4,5)
+    print(numberList[:2])
+    print(numberList[:-2])
+    print(numberList[1:])
+    print(numberList[-2:])
+    # numberList.reverse()
+    # print(numberList)
+
+    # for i in range(len(numberTuple) - 1, -1, -1):
+    #     print(numberTuple[i])
+
+def rightStrip(tempStr,splitStr):
+    endindex = tempStr.rfind(splitStr)
+    while endindex != -1 and endindex == len(tempStr) - 1:
+         tempStr = tempStr[:endindex]
+         endindex = tempStr.rfind(splitStr)
+    return tempStr
+
+def leftStrip(tempStr,splitStr):
+    startindex = tempStr.find(splitStr)
+    while startindex == 0:
+        tempStr = tempStr[startindex+1:]
+        startindex = tempStr.find(splitStr)
+    return tempStr
+
 if __name__ == '__main__':
     """
     注释获取的subList就是sectionidList 可以用所有的section 去获取诊断题目
     """
     # -------------获取章节id及sectionid--------------------
-    menuIdList = getFatherMenu()
-    subCoupleList = getMenuByFatherMenuId(menuIdList)
+    # menuIdList = getFatherMenu()
+    # subCoupleList = getMenuByFatherMenuId(menuIdList)
     # --------------获取诊断题目，答题，获取诊断结果-------------
     # comprehensiveList = getDiagnoseTopicBySectionId(3, 1)
     # reportedAnswerResults(idList)
-    # getDiagnoseResult(idList,3)
-    getAllDiagnoseTopics(subCoupleList)
+    # getDiagnoseResult()
+    # getAllDiagnoseTopics(subCoupleList)
     # --------------模型诊断接口（非暴露的业务接口）----------------------
     # getDiagnoseResultByQuestion(comprehensiveList)
     # ---------------获取练习题、详细信息课程详情， 相似题目等-----------
@@ -364,3 +424,10 @@ if __name__ == '__main__':
     # print('\n*******************此处分割*************************\n')
     # getCourseDetailById((errorList, funcList), URL_DETAIL)
     # getCourseDetailById((errorList, funcList), URL_SIMILAR)
+    # specialTest([])
+    test()
+    # str = '***H***'
+    # print(str)
+    # print(leftStrip(str,'*'))
+    # print(rightStrip(str,'*'))
+

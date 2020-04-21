@@ -3,9 +3,11 @@
 # @Date  : 2019/1/16
 # @Desc  :
 
-import requests,demjson
+import requests, demjson
+import xlrd, xlsxwriter
 
 desired_caps = {}
+DIR_PATH = r'G:\JmeterPressureScript\5.0OCR'
 
 
 # desired_caps['platformName'] = 'Android'
@@ -70,14 +72,14 @@ def splitest():
     print('x ordinate is : {0}, y ordinate is : {1}'.format(ordinateList[-2], ordinateList[-1]))
     file = {'file': open(piName, 'rb')}
     result = requests.request(method='POST', url='http://172.28.1.229:7027/ai-search/api/search', files=file,
-                              params={'x': str(ordinateList[-2]), 'y': str(ordinateList[-1]),'zipType':'ai'})
+                              params={'x': str(ordinateList[-2]), 'y': str(ordinateList[-1]), 'zipType': 'ai'})
     print(result.text)
     dataObject = demjson.decode(result.text)
     if dataObject['data'] is not None:
         print(dataObject['data']['questionListId'])
         for item in signList:
             for itemnew in dataObject['data']['questionListId']:
-                print('itemnew :{0} item :{1}'.format(itemnew,item))
+                print('itemnew :{0} item :{1}'.format(itemnew, item))
                 find += 1
                 if itemnew == item:
                     print('第几个找到的：', find)
@@ -96,6 +98,44 @@ def looptest():
             print('i is：{0}, j is {1}'.format(i, j))
             if j == 1:
                 break
+
+
+def splitordinate():
+    data = xlrd.open_workbook(DIR_PATH + '\\' + '图片名.xlsx')
+    sheet = data.sheets()[0]
+    rows = sheet.nrows
+    for row in range(1, rows):
+        picname = sheet.cell_value(row, 0)
+        ordinatelist = picname.split('#')[3].split('_')
+        print(picname, ordinatelist[0], ordinatelist[1])
+
+
+def splitocrv4ordinate():
+    piclist = []
+    suffix = r'/usr/jmeter/5.0ocr/picresources/'
+    data = xlrd.open_workbook(DIR_PATH + '\\' + '图片名.xlsx')
+    sheet = data.sheets()[0]
+    rows = sheet.nrows
+    for row in range(1, rows):
+        picname = sheet.cell_value(row, 0)
+        print(picname)
+        abspicname = suffix + picname + '@'
+        ordinate = picname.split('_')
+        piclist.append((abspicname + ordinate[2] + '@' + ordinate[3] + '@' + picname))
+    i = 1
+    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '5.0处理文件名.xlsx')
+    ws = workbook.add_worksheet(u'sheet1')
+    for item in piclist:
+        ws.write(i, 0, item)
+        i = i + 1
+    workbook.close()
+
+
+def testdir():
+    import os
+    path = r'D:\apktool'
+    listfile = os.listdir(path)
+    print(listfile)
 
 
 if __name__ == '__main__':
@@ -119,5 +159,8 @@ if __name__ == '__main__':
     # fptr.write(res + '\n')
     #
     # fptr.close()
-    splitest()
+    # splitest()
     # looptest()
+    # splitordinate()
+    # testdir()
+    splitocrv4ordinate()

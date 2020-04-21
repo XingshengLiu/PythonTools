@@ -2,13 +2,14 @@
 # @Author: LiuXingsheng
 # @Date  : 2018/11/19
 # @Desc  :
-import requests, os, xlrd, xlsxwriter, demjson, json, time, random
+import requests, os, xlrd, xlsxwriter, demjson, json, time, random_pic
 from xpinyin import Pinyin
 from io import StringIO
 from io import BytesIO
 import os
 import pickle
-import argparse,json
+import argparse, json
+from InterfaceStructure.resources import requestheaders
 
 TESTDOMAIN = 'http://test.eebbk.net'
 VIDEODOMAIN = 'http://videodata.eebbk.net'
@@ -332,7 +333,7 @@ def getClassTypeVoiceData(grade, subject, publisher, volume, module, unit, unitN
 
 def getTeacherInfoByNameForWisdom_voice():
     paramList = []
-    url = TESTDOMAIN + VOICEITEM + '/api/video/getTeacherInfoByNameForWisdom'
+    url = AIVOICE + '/api/video/getTeacherInfoByNameForWisdom'
     params1 = getTeacherInfoVoice('沙苗苗', '预习')
     params2 = getTeacherInfoVoice('兰海', '复习')
     params3 = getTeacherInfoVoice('王雨洁', '复习')
@@ -351,14 +352,14 @@ def getTeacherInfoVoice(teacherName, intent):
 
 # 智慧桌面
 def getAskHomeworkData():
-    url = ALPHA_DESK_DOMAIN + '/app/askhomework/getAskHomeworkData'
+    url = AIDESK + '/app/askhomework/getAskHomeworkData'
     params = {'machineId': '700H38300018B', 'province': '广东省', 'city': '东莞市', 'grade': '三年级'}
     result = requests.get(url=url, params=params)
     print(result.text)
 
 
 def getMarketStoreData():
-    url = ALPHA_DESK_DOMAIN + '/app/marketStore/getMarketStoreData'
+    url = AIDESK + '/app/marketStore/getMarketStoreData'
     header = {'deviceModel': 'S3 Pro', 'deviceOSVersion': 'V1.3.0_181119',
               'machineId': '700H38300018B'}
     param = getSync_VideoData('广东省', '广州市', '五年级', '2')
@@ -388,8 +389,8 @@ def getVideoTraningData():
 
 def getSyncSubjectData():
     headerList = []
-    # url = AIDESK + '/app/syncSubject/getSyncSubjectData'
-    url = TESTDOMAIN + DESKITEM + '/app/syncSubject/getSyncSubjectData'
+    url = AIDESK + '/app/syncSubject/getSyncSubjectData'
+    # url = TESTDOMAIN + DESKITEM + '/app/syncSubject/getSyncSubjectData'
     header1 = {'machineId': '700H384001DDU', 'apkVersionCode': '2050201', 'deviceModel': 'H7000'}
     # header2 = {'machineId': '50S3S10000092', 'apkVersionCode': '2050202', 'deviceModel': 'S3 Pro'}
     header2 = {'machineId': '70S3A95002541', 'apkVersionCode': '2050201', 'deviceModel': 'S3 Prow'}
@@ -504,7 +505,8 @@ def sendRobotSceret():
     url = 'https://api-develop.robot.okii.com/robot/api/secretSend/sendSecret'
     param = {'accountId': '7433440', 'machineId': '9d4fb401241aa1f8', 'secretContent': 'please call me daddy',
              'secretType': '1'}
-    header = {'phoneModel': 'iphone X', 'phoneSysver': 'IOS 12.1', 'token': '2a8d881ea0b6aca987f09658b28122d6','accountId': '7433440'}
+    header = {'phoneModel': 'iphone X', 'phoneSysver': 'IOS 12.1', 'token': '2a8d881ea0b6aca987f09658b28122d6',
+              'accountId': '7433440'}
     # for i in range(3):
     #     time.sleep(10)
     #     print(param)
@@ -522,20 +524,49 @@ def testArgumetn():
     print('参数是：', args)
 
 
+def migiration():
+    urllist = [
+        '/api/basicInfo/getGrades?subjectName=%E8%AF%AD%E6%96%87',
+        '/api/basicInfo/getPublishers?gradeName=%E4%B8%89%E5%B9%B4%E7%BA%A7&subjectName=%E8%AF%AD%E6%96%87',
+        '/api/basicInfo/getVolumes',
+        '/api/bookCatalog/getBookCatalogInfo?province=%E5%B9%BF%E4%B8%9C&city=%E4%B8%9C%E8%8E%9E&centerGrade=1&grade=1&subject=%E8%AF%AD%E6%96%87&publisher=%E4%BA%BA%E6%95%99%E7%89%88&volume=%E4%B8%8A&intent=%E5%A4%8D%E4%B9%A0',
+        '/api/bookCatalog/getBookSimpleCatalogInfo?province=%E5%B9%BF%E4%B8%9C&city=%E4%B8%9C%E8%8E%9E&centerGrade=1&grade=1&subject=%E8%AF%AD%E6%96%87&publisher=%E4%BA%BA%E6%95%99%E7%89%88&volume=%E4%B8%8A&intent=%E5%A4%8D%E4%B9%A0',
+        '/api/bookCatalog/getSyntheticalInfo?province=%E5%B9%BF%E4%B8%9C&city=%E4%B8%9C%E8%8E%9E&centerGrade=1&grade=1&subject=%E8%AF%AD%E6%96%87&publisher=%E4%BA%BA%E6%95%99%E7%89%88&volume=%E4%B8%8A&intent=%E5%A4%8D%E4%B9%A0',
+        '/api/exercise/getExampleExerciseInfo?province=%E5%B9%BF%E4%B8%9C&city=%E4%B8%9C%E8%8E%9E&centerGrade=1&grade=1&subject=%E8%AF%AD%E6%96%87&publisher=%E4%BA%BA%E6%95%99%E7%89%88&volume=%E4%B8%8A&intent=%E5%A4%8D%E4%B9%A0',
+        '/api/exercise/getFamousBookExerciseInfo?province=%E5%B9%BF%E4%B8%9C&city=%E4%B8%9C%E8%8E%9E&centerGrade=1&grade=1&subject=%E8%AF%AD%E6%96%87&publisher=%E4%BA%BA%E6%95%99%E7%89%88&volume=%E4%B8%8A&intent=%E5%A4%8D%E4%B9%A0',
+        '/api/exercise/getFamousBookExerciseInfo?province=广东省&centerGrade=三年级&city=东莞市&subject=语文&intent=复习课文',
+        '/api/video/getClassTypeInfoByNameForWisdom?province=广东省&centerGrade=三年级&city=东莞市&subject=英语&intent=看视频&classType=同步提高班',
+        '/api/video/getTeacherInfoByNameForWisdom?province=广东省&centerGrade=三年级&teacherName=子衿老师&city=东莞市&intent=看视频',
+        '/api/video/getVideoPlayInfo?province=广东省&centerGrade=三年级&city=东莞市&subject=语文&intent=预习课文',
+        '/api/bookCatalog/getBookSimpleCatalogInfo?province=广东省&centerGrade=三年级&city=东莞市&subject=语文&grade=三年级&intent=预习找书',
+        '/api/exercise/getFamousBookExerciseInfo?province=广东省&centerGrade=三年级&texts=天地人&city=东莞市&subject=语文&intent=复习课文',
+        '/api/exercise/getExampleExerciseInfo?province=广东省&centerGrade=三年级&city=东莞市&subject=数学&intent=复习知识点&knowledge=加法的意义']
+    for urltes in urllist:
+        result = requests.get(url=AIVOICE + urltes, headers=requestheaders.askhomework_header_S3P)
+        print(result.text)
+    for urlt in ['/app/h110wisdomdesktop/getSynEnglishWordGrades?grade=三年级&machineId=1','/app/h110wisdomdesktop/getSynChineseWordGrades?grade=三年级&machineId=1']:
+        result = requests.get(url=AIDESK + urlt, headers=requestheaders.askhomework_header_S3P)
+        print(result.text)
+
+
 def main():
-    getWisdomVideo()
+    # getWisdomVideo()
+    # 智慧语音
+    migiration()
     getClassTypeInfoByNameForWisdom()
     getTeacherInfoByNameForWisdom()
     getVideoPlayInfo()
-    # getSocialExercise()
-    # getFamousExercise()
     getClassTypeInfoByNameForWisdom_voice()
     getTeacherInfoByNameForWisdom_voice()
-    # cloudFloatSpellMeaningTool()
-    # getAskHomeworkData()
-    # getMarketStoreData()
+    # 智慧桌面
     getVideoTraningData()
-    # getSyncSubjectData()
+    getSyncSubjectData()
+    getAskHomeworkData()
+    getMarketStoreData()
+    # 以下不变
+    # getSocialExercise()
+    # getFamousExercise()
+    # cloudFloatSpellMeaningTool()
     # readFile()
     # # readStringIO()
     # writeByteIO()

@@ -1,4 +1,5 @@
-import xlwt, xlrd, os, json
+import xlwt, xlrd, os, json, xlsxwriter,random
+
 
 class ExcelData:
     machineId = ''
@@ -71,8 +72,34 @@ def getData():
         print("write error：" + str(ioerror))
 
 
+def cleanData():
+    savepath = r'G:\JmeterPressureScript\vtrainging'
+    videolist = []
+    contentdata = xlrd.open_workbook(r'C:\Users\Administrator\Desktop\工作簿1.xlsx')
+    sheet = contentdata.sheets()[0]
+    for row in range(1, sheet.nrows):
+        videolist.append(sheet.cell_value(row, 0).replace('\\\'', ''))
+    for step in [10, 20, 30, 40]:
+        listturn = [videolist[id:id + step] for id in range(0, len(videolist), step)]
+        workbook = xlsxwriter.Workbook(os.path.join(savepath, '分割数据' + str(step) + '.xlsx'))
+        ws = workbook.add_worksheet(u'sheet1')
+        column = 1
+        for item in listturn:
+            for i in range(100):
+                random.shuffle(item)
+                ws.write(column, 0, str(item).replace('[','').replace(']','').replace('\'','').replace(' ','') + '@')
+                column += 1
+        workbook.close()
+
+def test():
+    listnum = [1,2,3,4,5,6,7,8,9,10]
+    random.shuffle(listnum)
+    print(listnum)
+
 def main():
-    getData()
+    # getData()
+    cleanData()
+    # test()
 
 
 if __name__ == '__main__':

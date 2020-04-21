@@ -27,7 +27,7 @@ def readExcelContent():
     rows = sheet.nrows
     for row in range(1, rows):
         bean = WrongPicBean()
-        bean.picName = sheet.cell_value(row, 0)
+        bean.picNum = sheet.cell_value(row, 0)
         bean.picName = sheet.cell_value(row, 1)
         bean.result = sheet.cell_value(row, 2)
         contentbeanList.append(bean)

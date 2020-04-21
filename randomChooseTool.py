@@ -1,4 +1,4 @@
-import xlrd,os,random,xlwt
+import xlrd,os,random_pic,xlwt
 
 result = set()
 originalList = []
@@ -36,7 +36,7 @@ for file in excelfileList:
         originalList.clear()
     else:
         while len(result) < 10:
-            temp = random.randint(1, rows - 1)
+            temp = random_pic.randint(1, rows - 1)
             result.add(temp)
         for item in result:
             data = test.cell_value(item, 0)

@@ -81,7 +81,22 @@ def main():
 def getList():
     path = r'\\172.28.1.23\ai数据素材\AI测试素材库\已标注素材\图像\OCR\印刷体\英文印刷体\第二季度OCR英文素材_1'
     print(os.listdir(path))
+import sys
+import socket
+import threading
+import getopt
+import subprocess
 
+def testtarge():
+    target = None
+    if target and len(target):
+        print('123')
+    else:
+        print('456')
+    buffer = sys.stdin.read()
+    print(buffer)
+        
 if __name__ == '__main__':
     # main()
-    getList()
+    testtarge()
+    # getList()
