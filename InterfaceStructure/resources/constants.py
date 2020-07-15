@@ -28,6 +28,8 @@ syncchinese_online_api = 'syncchinese-online-api'
 wisdomdesktop = 'wisdomdesktop'
 weather_pad = 'weather-pad'
 feedback = 'feedback'
+social_scan = 'social-scan'
+learningcenter = 'learningcenter'
 
 TestDomain = 'http://test.eebbk.net/'
 TestDomainAli = 'http://testaliyun.eebbk.net/'
@@ -50,4 +52,6 @@ FormalDomainDic = {'ask-homework': 'http://askhomework.eebbk.net',
                    'syncchinese-online-api': 'http://syncchineseonlineapi.eebbk.net',
                    'wisdomdesktop': 'http://wisdomdesktop.eebbk.net',
                    'weather-pad': '',
-                   'feedback':'http://feedback.eebbk.net'}
+                   'feedback':'http://feedback.eebbk.net',
+                   'social-scan':'http://socialsearch.eebbk.net',
+                   'learningcenter':''}

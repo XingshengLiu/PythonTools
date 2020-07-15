@@ -4,10 +4,11 @@
 # @Desc  :
 from itertools import permutations
 
+
 # a = ['a', 'b', 'c']
 # a = 'abc'
 # for p in permutations(a):
-#     print(p)
+# print(p)
 
 class Item:
     cont = ''

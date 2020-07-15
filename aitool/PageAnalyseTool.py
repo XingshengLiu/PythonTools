@@ -15,15 +15,15 @@ def show_test(img, img_name='img', is_resized=False):
 
 
 if __name__ == '__main__':
-    imgPath = 'E:/PyGitHub/PythonTools/aitool/test'
+    imgPath = r'G:\testpic'
     imgs = os.listdir(imgPath)
     num = 1
     for item in imgs:
-        picPath = imgPath + '/' + item
+        picPath = os.path.join(imgPath,item)
         print(picPath)
         img = cv2.imread(picPath)
-        if (img == None):
-            print('null')
+        # if (img == None):
+        #     print('null')
         show_test(img, img_name='img', is_resized=True)
         while True:
             key = cv2.waitKey()

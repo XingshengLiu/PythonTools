@@ -11,7 +11,7 @@ import requests
 import demjson
 
 manager = domainManager.DomainManager()
-manager.setDomainType(constants.AlphaDomainType)
+manager.setDomainType(constants.FormalDomainType)
 manager.setItemName(constants.pointquestion)
 Type = 'Normal'
 
@@ -24,6 +24,7 @@ def searchDifficultProblems():
         requestheaders.askhomework_header.update({'apkPackageName': 'com.eebbk.aisearch.fingerstyle'})
         result = requests.post(url=url, params={'xPoint': '367', 'yPoint': '217', 'isLimitTimes': '0'}, files=file,
                                headers=requestheaders.askhomework_header)
+        print(result.text)
         if Type == 'Normal':
             objdata = demjson.decode(result.text)
             if objdata['data']:
@@ -45,6 +46,7 @@ def topicProcess():
                                params={'xPoint': '367', 'yPoint': '217', 'isLimitTimes': '0', 'yunfuVersion': '1'},
                                files=file,
                                headers=requestheaders.askhomework_header)
+        print(result.text)
         if Type == 'Normal':
             objdata = demjson.decode(result.text)
             if objdata['data']:
@@ -88,11 +90,18 @@ def getNewOcrGrayByMachineId(machineId):
     else:
         print('添加失败')
 
+def deleteNewBymachineId(machineId):
+    url = manager.getDomain() + pointquestion_testUrlSet.PointquestionUrlSet['deleteNewBymachineId']
+    print(url)
+    result = requests.post(url=url,
+                          params={'machineId': machineId}, headers=requestheaders.askhomework_header)
+    print(result.text)
 
 if __name__ == '__main__':
     machineId = '700S593001AE5'
-    # getNewOcrGrayByModel()
-    addNewOcrGrayMachineId(machineId)
-    getNewOcrGrayByMachineId(machineId)
-    # searchDifficultProblems()
-    # topicProcess()
+    deleteNewBymachineId(machineId)
+    getNewOcrGrayByModel()
+    # addNewOcrGrayMachineId(machineId)
+    # getNewOcrGrayByMachineId(machineId)
+    searchDifficultProblems()
+    topicProcess()

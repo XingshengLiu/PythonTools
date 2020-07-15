@@ -58,7 +58,21 @@ AskUrlSet = {
     # 获取笔神作文（新增接口）
     'getBishenCompositions': '/app/search/other/getBishenCompositions',
     # 上报机器信息,每个序列号只上报一次,多次上报只记录一次
-    'uploadActivationInfo':'/app/machinerecord/uploadActivationInfo'
+    'uploadActivationInfo': '/app/machinerecord/uploadActivationInfo',
+    # 通过词拼音或者词查询包含该词的词语列表{词语结构四-含有gaoxing的词语，含有高兴的词语}
+    'getWordsByContainWord': '/app/search/word/getWordsByContainWord',
+    # 词语查询包含该词语的词列表{含有高兴的词语
+    'getWordsByContainWord1': '/app/search/word/getWordsByContainWord1',
+    # 词名查询包含该词的词列表和主题词列表{含有gaoxing的词语
+    'getWordsByContainWordPhonetic1': '/app/search/word/getWordsByContainWordPhonetic1',
+    # 根据词语主题类型查询特定的词语themes=%E5%8F%A0%E8%AF%8D
+    'queryWordsByThemes': '/app/search/es/queryWordsByThemes',
+    # 残词补全{yi什么yi什么的词语
+    'getFragmentCompletionWithWordPhoneticWithPosition': '/app/search/word/getFragmentCompletionWithWordPhoneticWithPosition',
+    # 通用模块搜索---返回百科信息-->2020屏蔽百科
+    'queryCommonModule1': '/app/search/es/queryCommonModule1',
+    # 通过偏旁的拼音获取组合的字列表{包含you和cun的有什么字
+    'getCharactersByComponetPhonetics1': '/app/search/character/getCharactersByComponetPhonetics1'
 }
 
 VoiceUrlSet = {'uploadPointQuestionVoiceBaseData': '/api/voiceMaterial/uploadPointQuestionVoiceBaseData',

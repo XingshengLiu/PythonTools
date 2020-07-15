@@ -17,25 +17,22 @@ manager.setItemName(constants.askhomework)
 def test_getASRInfoByMachineId():
     url = manager.getDomain() + askhomewor_testUrlSet.AskUrlSet['getASRInfoByMachineId']
     print(url)
-    rulefstheaderdic = {'V100': '7V100030F50F0'}
-    rulesndheaderdic = {'S5': '70S5C9826ECB6'}
-    print('规则一：\n')
-    for key, value in rulefstheaderdic.items():
-        requestheaders.askhomework_header['machineId'] = value
-        requestheaders.askhomework_header['deviceModel'] = key
-        result = requests.get(url=url, headers=requestheaders.askhomework_header)
-        if value in "NMKHJGGHTYIUI":
-            if 'VIVO' in result.text:
-                print(key, value, '符合预期走思必驰')
-            else:
-                print(key, value, '不符合预期未走思必驰', result.text)
-        else:
-            if 'VIVO' in result.text:
-                print(key, value, '符合预期走VIVO')
-            else:
-                print(key, value, '不符合预期未走VIVO', result.text)
-    # print('\n规则二：\n')
-    # ruletest(url, rulesndheaderdic, 'SBC')
+    rulesndheaderdic_1 = {'S6': 'FEFEFEFEFEFEF', 'V100': 'QRQRQRQWERQWE'}
+    rulesndheaderdic_2 = {'S3 Prow': 'DFDFDFDFDFDFD', 'S1A': 'FGRTQWERTEWQS', 'S1W': 'LKOPIOJHUIUIH',
+                          'K5': 'VCVCBNMJVCXZS', 'K5A': 'DDFFCVXSDZXSA'}
+    rulesndheaderdic_3 = {'S5': '700S593001AE5'}
+    rulesndheaderdic_4 = {'S5': 'DCVBNGDSDFDFE'}
+    rulesndheaderdic_5 = {'S5': 'DCVBNGDSDFDXX'}
+    # S6 V100机型策略 全部走vivo
+    ruletest(url, rulesndheaderdic_1, 'VIVO')
+    # S3 Prow S1A S1W K5 K5A 机型策略全部走sbc
+    ruletest(url, rulesndheaderdic_2, 'SBC')
+    # 已有数据的走原有数据 VIVO
+    ruletest(url, rulesndheaderdic_3, 'VIVO')
+    # 五月份之前 未调用过的都走sbc 时间策略（需配合服务器时间改动验证，时间策略只有S5机型可验证）
+    ruletest(url, rulesndheaderdic_4, 'SBC')
+    # 五月份之后 不在上述机型、序列号的新用户走vivo 时间策略（需配合服务器时间改动验证，时间策略只有S5机型可验证）
+    ruletest(url, rulesndheaderdic_5, 'VIVO')
 
 
 def ruletest(url, headerpic, type):
@@ -44,7 +41,7 @@ def ruletest(url, headerpic, type):
         requestheaders.askhomework_header['deviceModel'] = key
         result = requests.get(url=url, headers=requestheaders.askhomework_header)
         if type in result.text:
-            print(key, value, '符合预期走{0}'.format(type))
+            print(key, value, '符合预期走{0}'.format(type), result.text)
         else:
             print(key, value, '不符合预期未走{0}'.format(type), result.text)
 
@@ -299,15 +296,22 @@ def queryCommonModuleByHanziStrAndphoneticStr1():
 
 
 def getUserActiveCorpuss():
+    # 700S594001FDA 现网活跃用户
     url = manager.getDomain() + askhomewor_testUrlSet.AskUrlSet['getUserActiveCorpuss']
     print(url)
     resultnotactive = requests.get(url=url, headers=requestheaders.askhomework_header)
     if 'false' in resultnotactive.text:
         print(requestheaders.askhomework_header['machineId'], '非活跃用户上报')
-    requestheaders.askhomework_header.update({'machineId': '700S5940011EX'})
+    else:
+        print(requestheaders.askhomework_header['machineId'], resultnotactive.text)
+    requestheaders.askhomework_header.update({'machineId': '700S594001FDA'})
+    # requestheaders.askhomework_header.update({'deviceModel': 'S5'})
+    # requestheaders.askhomework_header.update({'apkVersionCode': '4300000'})
     resultactive = requests.get(url=url, headers=requestheaders.askhomework_header)
     if 'true' in resultactive.text:
         print(requestheaders.askhomework_header['machineId'], '活跃用户上报')
+    else:
+        print(requestheaders.askhomework_header['machineId'], '未上报此序列号为活跃用户')
 
 
 def getListBySkillName():
@@ -317,7 +321,7 @@ def getListBySkillName():
     for item in paramList:
         print('*****************', item, '********************')
         for header in [requestheaders.askhomework_header, requestheaders.askhomework_header_S3P,
-                       requestheaders.askhomework_header_S1W,requestheaders.askhomework_header_V100]:
+                       requestheaders.askhomework_header_S1W, requestheaders.askhomework_header_V100]:
             print('--------------', header['deviceModel'], '-------------------------')
             result = requests.get(url=urlTest, headers=header, params={'skillName': item})
             # print(result.text)
@@ -345,9 +349,9 @@ def getSkillClassChildListByClassId(classidlist):
     urlFormal = 'http://askhomework.eebbk.net' + askhomewor_testUrlSet.AskUrlSet['getSkillClassChildListByClassId']
     print(urlTest)
     for item in classidlist:
-        print('************************一级id:',item,'****************************')
+        print('************************一级id:', item, '****************************')
         for header in [requestheaders.askhomework_header, requestheaders.askhomework_header_S3P,
-                       requestheaders.askhomework_header_S1W,requestheaders.askhomework_header_V100]:
+                       requestheaders.askhomework_header_S1W, requestheaders.askhomework_header_V100]:
             print('--------------', header['deviceModel'], '-------------------------')
             result = requests.get(url=urlTest, headers=header, params={'classId': item})
             objdata = demjson.decode(result.text)
@@ -432,6 +436,135 @@ def test_uploadActivationInfo():
         print(result.text)
 
 
+def getUrlandprint(item):
+    url = manager.getDomain() + askhomewor_testUrlSet.AskUrlSet[item]
+    print(url)
+    return url
+
+
+def getWordsByContainWord():
+    flag = 1
+    url = getUrlandprint('getWordsByContainWord')
+    wordslist = ['高兴', '快乐', '生气', '伤心']
+    for word in wordslist:
+        result = requests.get(url=url, params={'wordName': word, 'gradeName': '三年级', 'editionType': '人教版'},
+                              headers=requestheaders.askhomework_header)
+        print(result.text)
+        objdata = demjson.decode(result.text)
+        if 'simpleWords' in result.text:
+            for dataitem in objdata['data']:
+                for item in dataitem['simpleWords']:
+                    if item['phonetic'] and item['name']:
+                        pass
+                    else:
+                        print(word, '拼音或词语为空')
+                        flag = 0
+    if flag:
+        print(wordslist, '无数据异常')
+
+
+def getWordsByContainWord1():
+    flag = 1
+    url = getUrlandprint('getWordsByContainWord1')
+    wordslist = [('zhí wù', '植物'), ('lè', '乐')]
+    for word in wordslist:
+        result = requests.get(url=url, params={'wordPhonetic': word[0], 'wordName': word[1], 'gradeName': '五年级',
+                                               'editionType': '人教版'},
+                              headers=requestheaders.askhomework_header)
+        print(result.text)
+        objdata = demjson.decode(result.text)
+        if 'polyphoneThemeWordVo' in result.text:
+            for dataitem in objdata['data']:
+                if dataitem['polyphoneThemeWordVo']['themeWordVos'] and dataitem['polyphoneThemeWordVo']['title']:
+                    pass
+                else:
+                    print(word, '拼音或词语为空')
+                    flag = 0
+        else:
+            flag = 0
+    if flag:
+        print(wordslist, '无数据异常')
+
+
+def queryWordsByThemes():
+    flag = 1
+    url = getUrlandprint('queryWordsByThemes')
+    themeslist = ['ABB', 'AABB', 'AABC', '声音']
+    for word in themeslist:
+        result = requests.get(url=url, params={'themes': word},
+                              headers=requestheaders.askhomework_header)
+        print(result.text)
+        objdata = demjson.decode(result.text)
+        if 'data' in result.text:
+            for dataitem in objdata['data']:
+                if dataitem['name'] and dataitem['info']:
+                    pass
+                else:
+                    print(word, '拼音或词语为空')
+                    flag = 0
+    if flag:
+        print(themeslist, '无数据异常')
+
+
+def getFragmentCompletionWithWordPhoneticWithPosition():
+    flag = 1
+    url = getUrlandprint('getFragmentCompletionWithWordPhoneticWithPosition')
+    themeslist = ['yī * yī *']
+    for word in themeslist:
+        result = requests.get(url=url,
+                              params={'wordPhoneticWithPosition': word, 'gradeName': '五年级', 'editionType': '人教版'},
+                              headers=requestheaders.askhomework_header)
+        print(result.text)
+        objdata = demjson.decode(result.text)
+        if 'simpleWords' in result.text:
+            for dataitem in objdata['data']:
+                for item in dataitem['simpleWords']:
+                    if item['phonetic'] and item['name']:
+                        pass
+                    else:
+                        print(word, '拼音或词语为空')
+                        flag = 0
+    if flag:
+        print(themeslist, '无数据异常')
+
+
+def queryCommonModule1():
+    flag = 1
+    url = getUrlandprint('queryCommonModule1')
+    themeslist = ['风', '天', '达']
+    for word in themeslist:
+        result = requests.get(url=url,
+                              params={'hanziStr': word, 'gradeName': '五年级', 'editionType': '人教版'},
+                              headers=requestheaders.askhomework_header)
+        print(result.text)
+        objdata = demjson.decode(result.text)
+        if 'simpleWords' in result.text:
+            for dataitem in objdata['data']:
+                for item in dataitem:
+                    if item['hanziStr'] and item['phoneticStr'] and item['commonModuleVos']:
+                        pass
+                    else:
+                        print(word, '拼音或词语为空')
+                        flag = 0
+    if flag:
+        print(themeslist, '无数据异常')
+
+
+def getCharactersByComponetPhonetics1():
+    url = getUrlandprint('getCharactersByComponetPhonetics1')
+    result = requests.get(url=url,
+                          params={'componetPhonetics': 'yòu、yòu、yòu、yòu', 'gradeName': '三年级', 'editionType': '人教版'},
+                          headers=requestheaders.askhomework_header)
+    print(result.text)
+
+
+def test():
+    url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=f621557b-dff7-473d-a941-782f28abfe69'
+    params = {'msgtype': 'text', 'text': {'content': 'at所有人!', 'mentioned_list': ['@all']}}
+    result = requests.post(url=url, json=params)
+    print(result.text)
+
+
 if __name__ == '__main__':
     # test_getASRInfoByMachineId()
     # test_getPoetryDetailAndSecondKnow()
@@ -452,12 +585,21 @@ if __name__ == '__main__':
     # queryCommonModuleByHanziStrAndphoneticStr1()
     # getUserActiveCorpuss()
     # ----------------------一次迭代-------------------------
-    getListBySkillName()
-    classidlist = getTopOperates()
-    getSkillClassChildListByClassId(classidlist)
-    getLegalComplianceH5()
-    getThemeSkin()
-    getArticleExtraMoreStyles()
-    getBishenCompositions()
+    # getListBySkillName()
+    # classidlist = getTopOperates()
+    # getSkillClassChildListByClassId(classidlist)
+    # getLegalComplianceH5()
+    # getThemeSkin()
+    # getArticleExtraMoreStyles()
+    # getBishenCompositions()
     # ---------------------唤醒激活-----------------------
     # test_uploadActivationInfo()
+    # ---------------------一次迭代------------------------- 返回的词语按字数从少到多排列
+    # getWordsByContainWord()
+    # getWordsByContainWord1()
+    # queryWordsByThemes()
+    # getFragmentCompletionWithWordPhoneticWithPosition()
+    # queryCommonModule1()
+    # ---------------------市场反馈 四个you ----------------------
+    # getCharactersByComponetPhonetics1()
+    test()
