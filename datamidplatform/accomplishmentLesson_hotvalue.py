@@ -52,7 +52,7 @@ def countData():
         coursecount[cp] = courseId.count(cp)
     newthirdcount = sorted(thirdcount.items(), key=lambda item: item[1], reverse=True)
     newcoursecount = sorted(coursecount.items(), key=lambda item: item[1], reverse=True)
-    print('--------',newthirdcount)
+    print('--------', newthirdcount)
     print('--------', newcoursecount)
     workbook = xlsxwriter.Workbook(os.path.join(DirPath, '用户数据整理结果.xlsx'))
     ws = workbook.add_worksheet(u'sheet1')
@@ -66,7 +66,6 @@ def countData():
             ws.write(row, column, str(newcoursecount[i][column]))
         i += 1
     workbook.close()
-
 
 
 def readBDdata():
@@ -96,9 +95,9 @@ def readBDdata():
             pass
     print('书法三级标签', handlist)
     newhandlist = sorted(handlist, key=lambda item: item[1], reverse=True)
-    print('书法三级标签排序',newhandlist )
+    print('书法三级标签排序', newhandlist)
     print('书法课程标签', handcourselist)
-    newhandcourselist =  sorted(handcourselist, key=lambda item: item[2], reverse=True)
+    newhandcourselist = sorted(handcourselist, key=lambda item: item[2], reverse=True)
     print('书法课程标签排序', newhandcourselist)
     print('----------')
     print('器乐三级标签', musiclist)
@@ -106,7 +105,7 @@ def readBDdata():
     print('器乐三级标签排序', newmusiclist)
     print('器乐课程标签', musiccourselist)
     newmusiccourselist = sorted(musiccourselist, key=lambda item: item[2], reverse=True)
-    print('器乐课程标签排序',newmusiccourselist)
+    print('器乐课程标签排序', newmusiccourselist)
 
     workbook = xlsxwriter.Workbook(os.path.join(DirPath, '算法数据整理结果_1.xlsx'))
     ws = workbook.add_worksheet(u'sheet1')
@@ -134,7 +133,42 @@ def readBDdata():
     workbook.close()
 
 
+def teststr():
+    list = [1,2,3,4]
+    print(list[:2])
+    for i in range(1,1):
+        print('%%%',i)
+    # strs = ["c", "c"]
+    # strs = ["flower","flow","flight"]
+    # strs = ["dog","racecar","car"]
+    # strs = ["a", "b"]
+    strs = []
+    # strs = ['']
+    strs = ['c','c']
+    if not strs:
+        print('xxxxxxxx')
+        return ""
+    str0 = min(strs)
+    str1 = max(strs)
+    for i in range(len(str0)):
+        if str0[i] != str1[i]:
+            print('11111',str0[:i])
+            return str0[:i]
+    print('222222',str0)
+    return str0
+
+
 if __name__ == '__main__':
     # readData()
     # countData()
-    readBDdata()
+    # readBDdata()
+    teststr()
+    test = ['']
+    if test:
+        print(True)
+    else:
+        print(False)
+    print(len(['']))
+    strs = ["dog", "racecar", "car"]
+    print(min(strs))
+    print(max(strs))
