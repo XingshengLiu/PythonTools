@@ -133,42 +133,41 @@ def readBDdata():
     workbook.close()
 
 
-def teststr():
-    list = [1,2,3,4]
-    print(list[:2])
-    for i in range(1,1):
-        print('%%%',i)
-    # strs = ["c", "c"]
-    # strs = ["flower","flow","flight"]
-    # strs = ["dog","racecar","car"]
-    # strs = ["a", "b"]
-    strs = []
-    # strs = ['']
-    strs = ['c','c']
-    if not strs:
-        print('xxxxxxxx')
-        return ""
-    str0 = min(strs)
-    str1 = max(strs)
-    for i in range(len(str0)):
-        if str0[i] != str1[i]:
-            print('11111',str0[:i])
-            return str0[:i]
-    print('222222',str0)
-    return str0
+def teststr(s):
+    if not s: return
+    newstr = s[0]
+    for item in range(1, len(s)):
+        newstr += s[item]
+        if newstr[::-1] == newstr:
+            print(newstr)
+        else:
+            print(False)
+
+
+def test_strrever():
+    s = "a good   example"
+    print(s.splitlines(False))
+    strlist = s.split(' ')
+    strlist1 = s.split(' ')
+    strlist3 = s.split()
+    print(strlist1)
+    print(strlist3)
+    for item in strlist[::-1]:
+        if not item:
+            strlist.remove(item)
+    strlist.reverse()
+    # print(str(strlist).replace('[','').replace(']','').replace('\'','').replace(' ','').replace(',',' '))
+    print(' '.join(s.strip().split()[::-1]))
+    s = 'agoodexample'
+    l = 'xt'
+    print(s.find(l))
+    print(s.index('xx'))
 
 
 if __name__ == '__main__':
     # readData()
     # countData()
     # readBDdata()
-    teststr()
-    test = ['']
-    if test:
-        print(True)
-    else:
-        print(False)
-    print(len(['']))
-    strs = ["dog", "racecar", "car"]
-    print(min(strs))
-    print(max(strs))
+    # teststr("cbbd")
+    test_strrever()
+

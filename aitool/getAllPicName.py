@@ -9,7 +9,7 @@ from datetime import datetime
 import csv
 
 
-DIR_PATH = r'H:\业务中台\手写笔迹\0714素材\50_part1\导出数据\path'
+DIR_PATH = r'H:\内容中台\测试集\复杂问题_2个及2个以上名词\洪裕捷--top1精准答'
 
 
 def getAllPic():
@@ -17,11 +17,11 @@ def getAllPic():
     filelist = os.listdir(DIR_PATH)
     for file in filelist:
         # if file.endswith('.JPEG') or file.endswith('.jpg') or file.endswith('.bmp') or file.endswith('.png'):
-        if file.endswith('.txt'):
+        if file.endswith('.html'):
             picList.append(file)
         else:
             pass
-    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '图片名.xlsx')
+    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '复杂问题_2及2以上名词_top1精准答.xlsx')
     ws = workbook.add_worksheet(u'sheet1')
     ws.write(0, 0, '图片名称')
     column = 1
