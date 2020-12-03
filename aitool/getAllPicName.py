@@ -3,13 +3,15 @@
 # @Date  : 2019/5/31
 # @Desc  : 工具类：1. 获取所有图片名称生成excel 2. 包含导入大数据平台的数据转换函数
 
-import xlsxwriter, os, base64,xlrd
+import xlsxwriter, os, base64, xlrd
 from xlrd import xldate_as_tuple
 from datetime import datetime
 import csv
+import json
+import requests
+import collections
 
-
-DIR_PATH = r'H:\内容中台\测试集\复杂问题_2个及2个以上名词\洪裕捷--top1精准答'
+DIR_PATH = r'H:\内容中台\精准搜题项目\测试集\作业工具月报测试集\opensearch'
 
 
 def getAllPic():
@@ -21,7 +23,7 @@ def getAllPic():
             picList.append(file)
         else:
             pass
-    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '复杂问题_2及2以上名词_top1精准答.xlsx')
+    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '图片名.xlsx')
     ws = workbook.add_worksheet(u'sheet1')
     ws.write(0, 0, '图片名称')
     column = 1
@@ -49,7 +51,7 @@ def writebase64_2txt():
     for pic in picList:
         # OCR 4.0 转base64 需求 用于分割图片名称和坐标点
         # orlist = pic.split('_')
-        with open(DIR_PATH + '\\' + 'b64_kousuanpics1.txt','a+',encoding='utf-8') as fwrite:
+        with open(DIR_PATH + '\\' + 'b64_kousuanpics1.txt', 'a+', encoding='utf-8') as fwrite:
             with open(DIR_PATH + '\\' + pic, 'rb') as f:
                 base64str = base64.b64encode(f.read())
                 # OCR 4.0 转base64 需求
@@ -58,9 +60,10 @@ def writebase64_2txt():
                 fwrite.write(str(base64str,encoding='utf-8') + ',' + '\n')
                 fwrite.flush()
 
+
 def convertonline():
-    DirPath = r'C:\Users\Administrator\Desktop\quesitonid对应关系\Z计划个人学习进度_构造测试集_内容V2\6_名师_快搜'
-    resultdata = xlrd.open_workbook(os.path.join(DirPath,'onlinelesson_6.xlsx'))
+    DirPath = r'C:\Users\Administrator\Desktop\quesitonid对应关系\Z计划整机学习进度_构造测试集\7_名师_快搜_好题'
+    resultdata = xlrd.open_workbook(os.path.join(DirPath, 'onlinelesson_7.xlsx'))
     resultsheet = resultdata.sheets()[0]
     rows = resultsheet.nrows
     columns = resultsheet.ncols
@@ -72,15 +75,86 @@ def convertonline():
                 content += str(date.strftime("%Y-%m-%d %H:%M:%S")) + '\001'
             else:
                 content += str(resultsheet.cell_value(row, i)) + '\001'
-        with open(os.path.join(DirPath,'onlinelesson_6_individual.txt'),'a+',encoding='utf-8') as fwrite:
+        with open(os.path.join(DirPath, 'onlinelesson_7_individual.txt'), 'a+', encoding='utf-8') as fwrite:
             fwrite.write(content + '\n')
             fwrite.flush()
 
 
+def renamePic():
+    picList = []
+    filelist = os.listdir(DIR_PATH)
+    for file in filelist:
+        if file.endswith('.JPEG') or file.endswith('.jpg') or file.endswith('.bmp') or file.endswith('.png'):
+            # if file.endswith('.html'):
+            picList.append(file)
+        else:
+            pass
+    for pic in picList:
+        os.rename(os.path.join(DIR_PATH, pic), os.path.join(DIR_PATH, 'material_' + pic))
+
+
+def findTwoBox():
+    jsonList = []
+    filelist = os.listdir(DIR_PATH)
+    print(len(filelist))
+    for file in filelist:
+        if file.endswith('.json'):
+            # if file.endswith('.html'):
+            jsonList.append(file)
+        else:
+            pass
+    for file in jsonList:
+        with open(os.path.join(DIR_PATH, file), 'r') as f:
+            json_data = json.load(f)
+            if json_data['shapes'] == 2:
+                print(json)
+            else:
+                pass
+
+
+def getCheckSheet():
+    originallist = []
+    resultdata = xlrd.open_workbook(os.path.join(DIR_PATH, '搜题错误.xlsx'))
+    resultsheet = resultdata.sheets()[0]
+    rows = resultsheet.nrows
+    columns = resultsheet.ncols
+    for row in range(1, rows):
+        item = []
+        for clo in range(columns):
+            item.append(resultsheet.cell_value(row, clo))
+        if row < 10:
+            item.append('00' + str(row) + '.jpg')
+            item.append('00' + str(row) + '.html')
+        elif 10 <= row < 100:
+            item.append('0' + str(row) + '.jpg')
+            item.append('0' + str(row) + '.html')
+        else:
+            item.append(str(row) + '.jpg')
+            item.append(str(row) + '.html')
+        originallist.append(item)
+    titlelist = [['序列号','粗框图','标注Id','返回id','相同Id','第几屏相同','五屏结果','首屏结果','请求耗时','html文档','重命名图','重命名html']]
+    cmpltlist = titlelist + originallist
+    workbook = xlsxwriter.Workbook(DIR_PATH + '\\' + '整理文件_opensearch错误.xlsx')
+    ws = workbook.add_worksheet(u'sheet1')
+    for row in range(len(cmpltlist)):
+        for col in range(len(cmpltlist[row])):
+            ws.write(row, col, cmpltlist[row][col])
+    workbook.close()
+    for pic in originallist:
+        os.rename(os.path.join(DIR_PATH,pic[1]),os.path.join(DIR_PATH,pic[10]))
+        os.rename(os.path.join(DIR_PATH, pic[9]), os.path.join(DIR_PATH, pic[11]))
+
+
+
+
 def main():
-    getAllPic()
+    # findTwoBox()
+    # getAllPic()
+    # renamePic()
     # writebase64_2txt()
     # convertonline()
+    getCheckSheet()
+
 
 if __name__ == '__main__':
     main()

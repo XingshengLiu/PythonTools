@@ -14,10 +14,10 @@ SingleDirPath = r'C:\Users\Administrator\Desktop\quesitonid对应关系\精准�
 DirPath = r'C:\Users\Administrator\Desktop\quesitonid对应关系\构造测试集'
 DirPath_v2 = r'C:\Users\Administrator\Desktop'
 # 内容V2.0 版本 Z计划个人学习进度复测路径
-DirPath_v2_content = r'C:\Users\Administrator\Desktop\quesitonid对应关系\Z计划个人学习进度_构造测试集_内容V2'
+DirPath_v2_content = r'C:\Users\Administrator\Desktop\quesitonid对应关系\Z计划整机学习进度_构造测试集'
 # 给定某个区间段的上限 如获取40~50区间内的随机题目数量，设置为50
-EXPECTED_SEED = 50
-GroupNum = 2
+EXPECTED_SEED = 10
+GroupNum = 3
 originallist = [(1, 2, 1369, 1), (1, 2, 1489, 2), (1, 2, 1489, 3), (1, 2, 1411, 4), (1, 3, 1389, 5), (1, 3, 1449, 6),
                 (1, 4, 2289, 7), (2, 1, 1569, 10), (2, 1, 13369, 11), (2, 1, 1569, 12), (2, 1, 156933, 13),
                 (2, 1, 156945, 14)]
@@ -25,7 +25,7 @@ originallist = [(1, 2, 1369, 1), (1, 2, 1489, 2), (1, 2, 1489, 3), (1, 2, 1411, 
 
 def getoriginalData_csv_v2():
     originallist = []
-    with open(os.path.join(DirPath_v2_content, '知识体系目录_100w.csv'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(DirPath_v2_content, '人教版题目_16w.csv'), 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         rows = [row for row in reader]
     for item in rows[1:]:

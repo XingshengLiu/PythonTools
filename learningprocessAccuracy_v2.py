@@ -7,7 +7,7 @@ import csv
 import xlrd
 import xlsxwriter
 
-DirPath = r'C:\Users\Administrator\Desktop'
+DirPath = r'H:\大数据中台项目\标签测试报告\Z计划-个人学习进度标签\搜题\整机学习进度'
 def readStandardData():
     """
     一张表一张表算最好，不要算整体的，程序此处已支持多张表数据全部读出，但是不好分情况统计，最好按7种场景让大数据提供数据
@@ -16,7 +16,7 @@ def readStandardData():
     """
     signrecord = []
     signrecordwithmachineId = {}
-    data = xlrd.open_workbook(os.path.join(DirPath, 'Z计划学习进度测试结果_标准对照.xlsx'))
+    data = xlrd.open_workbook(os.path.join(DirPath, 'Z计划整机学习进度测试结果_标准对照.xlsx'))
     machineIdlist = []
     for sheet in data.sheets():
         sheetrows = sheet.nrows
@@ -36,19 +36,20 @@ def readStandardData():
             signrecord = []
             if sheet.cell_value(row, 2):
                 machineIdlist.append(sheet.cell_value(row, 2))
-    print(signrecordwithmachineId)
+    print('对照结果中共有多少条记录',len(signrecordwithmachineId),'序列号有',len(machineIdlist))
     return signrecordwithmachineId, machineIdlist
 
 
 def getoriginalData_csv_v2():
     singrecorddic = {}
-    with open(os.path.join(DirPath, 'data_2020-06-08 09_03_26 PM——new.csv'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(DirPath, 'result2.csv'), 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         rows = [row for row in reader]
     for item in rows[1:]:
         # 顺序及对应字段含义见下表
         # bookId,单元Id,小节Id,知识点Id
         singrecorddic.update({item[0]:[item[3],item[4],item[5],item[6]]})
+    print('大数据计算有多少数据',len(singrecorddic))
     return singrecorddic
 
 def formaldata(data):
@@ -93,8 +94,9 @@ def calcuaccuracy(stdrecorddic, calrecorddic, machinelist):
                 signresultrecord.append(1)
             accuracyrecordlist.append((machine, std_machinerecordlist + cal_machinerecordlist + signresultrecord))
         except KeyError as e:
+            pass
             # accuracyrecordlist.append((machine, std_machinerecordlist + ['无数据', '无数据', '无数据', '无数据', '无数据'] + [0, 0, 0, 0, 0, 0]))
-            print('没有查询出此序列号', e.args)
+            # print('没有查询出此序列号', e.args)
         for i in range(len(signresultrecord)):
             if signresultrecord[i] == 1:
                 successcount[i] += 1
@@ -137,7 +139,7 @@ def writecontent(accuracyrecordlist):
 
 
 if __name__ == '__main__':
-    Groupname = '优化版V2.1'
+    Groupname = '整机进度0804_result2'
     stdrecorddic, machinelist =  readStandardData()
     calrecorddic = getoriginalData_csv_v2()
     accuracyrecordlist = calcuaccuracy(stdrecorddic, calrecorddic, machinelist)

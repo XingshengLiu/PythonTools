@@ -39,53 +39,64 @@ def readData():
 
 
 def readGradeData():
+    """
+    读取学段app的csv数据
+    :return:
+    """
     keycount = collections.defaultdict(list)
     typecount = collections.defaultdict(list)
-    gradecount = collections.defaultdict(list)
-    tidycount = collections.defaultdict(list)
     with open(os.path.join(GradeDirPath, 'app热度分学段原始数据.csv'), 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         datalist = [row for row in reader]
     for data in datalist[1:]:
-        key = data[0]
-        keycount[key].append(data[2:])
+        key = (data[0],data[3])
+        keycount[key].append([data[2],data[4]])
     print('--------------', keycount)
     for key in keycount.keys():
         countnum = 0
         datenum = 0
         for item in keycount[key]:
             datenum += getTimeStamp(item[0])
-            countnum += int(item[2])
-            typecount[key] = [item[1], datenum, countnum]
+            countnum += int(item[1])
+            typecount[key] = [datenum, countnum]
     print('学段整理后的数据', typecount)
-    for key in keycount.keys():
-        for item in keycount[key]:
-            gradecount[item[1]].append([item[0], item[2]])
-        tidycount[key].append(gradecount)
-    print('*************************')
-    for key in typecount.keys():
-        for typecount[key]
-
-    # print('年级整理后的数据', tidycount)
     return typecount
 
 
-def readExpectData():
+def readExpectData(dirpath,file,type):
+    """
+    读取大数据计算的热度结果
+    :param dirpath: 不同类型的数据源路径
+    :param file: 数据源文件名
+    :param type: 整机APP热度还是学段APP热度
+    :return:
+    """
     keycount = collections.defaultdict(list)
-    with open(os.path.join(DirPath, 'app热度计算结果.csv'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(dirpath, file), 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         datalist = [row for row in reader]
-    for data in datalist[1:]:
-        key = data[0]
-        keycount[key].append(data[1])
-    print(keycount)
+    if type == 'APP':
+        for data in datalist[1:]:
+            key = data[0]
+            keycount[key].append(data[1])
+    else:
+        for data in datalist[1:]:
+            key = (data[0],data[2])
+            keycount[key].append(data[1])
+    print('学段计算数据整理后结果',keycount)
     return keycount
 
 
-def compare(userdata, calcudata, kind):
-    for key in userdata.keys():
-        print(key)
-    workbook = xlsxwriter.Workbook(os.path.join(DirPath, kind + '整机热度测试整理_v2_test.xlsx'))
+def compare(userdata, calcudata, kind,dirpath):
+    """
+    比较合并用户数据和计算数据
+    :param userdata: 用户数据整理结果
+    :param calcudata: 大数据计算数据整理结果
+    :param kind: 整机app热度还是学段热度
+    :param dirpath: 文件生成的路径
+    :return:
+    """
+    workbook = xlsxwriter.Workbook(os.path.join(dirpath, kind + '整机热度测试整理_v3_test.xlsx'))
     ws = workbook.add_worksheet(u'sheet1')
     row = 0
     for key in userdata.keys():
@@ -105,6 +116,10 @@ def getTimeStamp(date):
 
 if __name__ == '__main__':
     # userdata = readData()
-    # calcudata = readExpectData()
-    # compare(userdata, calcudata,'整机app')
-    readGradeData()
+    # calcudata = readExpectData(DirPath,'app热度计算结果.csv','APP')
+    # compare(userdata, calcudata,'整机app',DirPath)
+    print('------------------')
+    userdatagrade = readGradeData()
+    calcudatagrade = readExpectData(GradeDirPath,'app热度分学段计算结果.csv','Grade')
+    compare(userdatagrade, calcudatagrade,'学段APP',GradeDirPath)
+
