@@ -5,26 +5,28 @@
 import os
 import requests
 import demjson
+import json
 from contentmidplatform.equationAccuracyTest import readExcel
 from contentmidplatform.equationAccuracyTest import writecontent
 
-Dirpath = r'H:\内容中台\精准搜题项目\测试集\计算题测试\用户笔迹\粗框图'
+Dirpath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\技术专项-计算题\无等号&除法竖式&比大小\压缩校正图'
 
 def searchVivoCalculation(piclist):
     compllist = []
-    url = 'http://testaliyun.eebbk.net/ai-search/api/searchVivoCalculation'
+    # url = 'http://testaliyun.eebbk.net/ai-search/api/searchVivoCalculation'
+    url = 'http://47.112.238.105:8014/ai-search/api/searchVivoCalculation'
     for pic in piclist:
-        ordx,ordy = pic[0].split('_')[-4],pic[0].split('_')[-3]
+        ordx,ordy = pic[0].split('_')[-6],pic[0].split('_')[-5]
         with open(os.path.join(Dirpath,pic[0]),'rb') as f:
             file = {'file':f.read()}
-            result = requests.post(url=url,files = file,params = {'zipType':'unzip','xPoint':int(ordx),'yPoint':int(ordy),'ocrType':'self4'})
+            result = requests.post(url=url,files = file,params = {'zipType':'unzip','xPoint':int(ordx),'yPoint':int(ordy),'ocrType':'self4','isTest':True})
             print(result.text)
             if result.status_code == requests.status_codes.codes.ok:
                 if 'resultBean' in result.text:
                     objdata = demjson.decode(result.text)
                     if objdata['data']['resultBean'] and ('questionAnalyse' in objdata['data']['resultBean']):
                         print('------>>>>>',objdata['data']['resultBean']['questionAnalyse'])
-                        if pic[1] == objdata['data']['resultBean']['questionAnalyse']:
+                        if cleanStr(pic[1]) == objdata['data']['resultBean']['questionAnalyse']:
                             print('正确')
                             compllist.append([pic[0],pic[1],objdata['data']['resultBean']['questionAnalyse'],'正确'])
                         else:
@@ -41,7 +43,11 @@ def searchVivoCalculation(piclist):
                 compllist.append([pic[0],pic[1],'无返回','请求错误'])
     return compllist
 
+def cleanStr(labelstr):
+    return str(labelstr).replace('（','(').replace('）',')').replace(' ','')
+
+
 if __name__ == '__main__':
-    piclist = readExcel()
+    piclist = readExcel(Dirpath,'计算题标注.xlsx')
     compllist = searchVivoCalculation(piclist)
-    writecontent(compllist,Dirpath,'计算题优化_正式环境基线准确率.xlsx')
+    writecontent(compllist,Dirpath,'计算题优化_专项环境_优化场景素材准确率0220.xlsx')

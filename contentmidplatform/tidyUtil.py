@@ -40,7 +40,10 @@ def wrapper_simple(strlist):
     for quesitonId in encodelist:
         if '=' in quesitonId and quesitonId != '':
             decodeid = decryptorUtil.decryption_Qid(quesitonId)
-            signlist.append(str(decodeid))
+            if ('计算题' in decodeid) or ('ZYB' in decodeid):
+                pass
+            else:
+                signlist.append(str(decodeid))
         else:
             if quesitonId != '':
                 signlist.append(str(quesitonId))
@@ -49,14 +52,14 @@ def wrapper_simple(strlist):
     return signlist
 
 def readExcel():
-    filepath = os.path.join(r'H:\内容中台\精准搜题项目\测试集\作业工具月报测试集', '11月标注Id.xlsx')
+    filepath = os.path.join(r'F:\EnterpriseMM Cache\WXWork Files\File\2021-02', '12月标注id(1).xlsx')
     contentdata = xlrd.open_workbook(filepath)
-    sheet = contentdata.sheets()[1]
+    sheet = contentdata.sheets()[0]
     rows = sheet.nrows
     for row in range(1, rows):
         # print(sheet.cell_value(row,0))
         # print(wrapper(sheet.cell_value(row, 0), sheet.cell_value(row, 1)))
-        print(wrapper_simple(sheet.cell_value(row, 2)))
+        print(wrapper_simple(sheet.cell_value(row, 3)))
 
 if __name__ == '__main__':
     # ids = [

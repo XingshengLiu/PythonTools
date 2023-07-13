@@ -5,8 +5,8 @@
 import os
 import xlsxwriter
 
-DIR = r'\\172.28.1.23\ai数据素材\AI测试素材库\未标注素材\准备标注素材\公式'
-
+DIR = r'H:\内容中台\精准搜题项目\测试集\作业工具月报测试集\opensearch_6月'
+g
 
 def getPicDir(dir):
     dirList = []

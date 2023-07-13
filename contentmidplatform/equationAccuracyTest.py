@@ -9,7 +9,7 @@ import xlsxwriter
 import requests
 
 PicPath = r'C:\Users\Administrator\Desktop\JpgData20200817165032_0_821_307_3456_4608g.jpg'
-Dirpath = r'H:\内容中台\精准搜题项目\测试集\计算题测试\用户笔迹\粗框图'
+Dirpath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\技术专项-计算题\用户笔迹\粗框图'
 def readAccurateFrameExcel():
     accurateFramedic = {}
     contentdata = xlrd.open_workbook(os.path.join(Dirpath, '图片名1.xlsx'))
@@ -17,13 +17,13 @@ def readAccurateFrameExcel():
     for row in range(1,sheet.nrows):
         accurateFramedic[sheet.cell_value(row, 0).split('_')[0]] = sheet.cell_value(row, 1)
     
-def readExcel():
+def readExcel(Dirpath,filename):
     piclist = []
     # contentdata = xlrd.open_workbook(os.path.join(os.getcwd(),'图片名1.xlsx'))
-    contentdata = xlrd.open_workbook(os.path.join(Dirpath, '算式识别标注_灰度前验证.xlsx'))
+    contentdata = xlrd.open_workbook(os.path.join(Dirpath, filename))
     sheet = contentdata.sheets()[0]
     for row in range(1,sheet.nrows):
-        piclist.append([sheet.cell_value(row, 0),sheet.cell_value(row, 1)])
+        piclist.append([sheet.cell_value(row, 3),sheet.cell_value(row, 4)])
     return piclist
 
 

@@ -10,18 +10,19 @@ import os
 import requests
 import collections
 import xlsxwriter
+import DESCoder
 import decryptorUtil
 import time
 # 图片素材路径
-PicPath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\全链路-点问搜题\7月\粗框图'
+PicPath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\竞品对比-点问搜题\10月\已入库素材\英语\粗框图'
 # 报告生成路径
 FilePath = r'H:\内容中台\精准搜题项目\测试集\作业工具月报测试集'
 
 # 测试报告生成标题
-ReportDict = {'TestTitle': 'opensearch',
-              'TestResourceMonth': '7月',
+ReportDict = {'TestTitle': '更新索引',
+              'TestResourceMonth': '英语错误部分',
               'TestEnv': '专项环境',
-              'TestDate': '1201'}
+              'TestDate': '1221'}
 # 测试结果
 ResultDict = {'FiveCounter': 0,
               'OneCounter': 0,
@@ -39,16 +40,16 @@ LabelIndex = 2
 # 统计结果文件中统计数据列号
 CounterIndex = 10
 # x坐标位于图片名中的索引（原粗框图x:-3 y:-2,整页框x:-6,y:-5）
-XIndex = -3
+XIndex = -4
 # y坐标位于图片名中的索引
-YIndex = -2
+YIndex = -3
 
 # 测试环境请求地址
 # url = 'http://test.eebbk.net/pointquestion-app/app/topicProcess/searchDifficultProblems'
 # 正式环境请求地址
-# url = 'http://pointquestion.eebbk.net/pointquestion-app/app/topicProcess/searchDifficultProblems'
+url = 'http://pointquestion.eebbk.net/pointquestion-app/app/topicProcess/searchDifficultProblems'
 # 专项验证环境请求地址
-url = 'http://47.112.238.105:8014/pointquestion-app/app/topicProcess/searchDifficultProblems'
+# url = 'http://47.112.238.105:8014/pointquestion-app/app/topicProcess/searchDifficultProblems'
 # 测试环境整页框请求地址
 # url = 'http://test.eebbk.net/pointquestion-app/app/topicProcess/searchProblemsByWholePicture'
 
@@ -91,11 +92,11 @@ def searchDifficultProblems():
                 FstQuesitonList = []
                 objdata = json.loads(result.text)
                 if objdata['data']['questions']:
-                    fstquesitons = decryptorUtil.decryption_Q(objdata['data']['questions'])
+                    fstquesitons = DESCoder.decryption_Q_py(objdata['data']['questions'])
                     if 'questionId' in fstquesitons:
                         FstQuesitonList = [str(fstquesitons['questionId'])]
                 if objdata['data']['questionListId']:
-                    decodequestionlist = decryptorUtil.decryption_Qids(objdata['data']['questionListId'])
+                    decodequestionlist = DESCoder.decryption_Qids_py(objdata['data']['questionListId'])
                     # print('------>返回的后四屏结果',decodequestionlist)
                     CmpltList = FstQuesitonList + decodequestionlist
                     UnionSet = set(PicCount[machine][1]) & set(CmpltList)
@@ -219,12 +220,13 @@ def writeExcel(PicCount):
 
 
 def test():
-    testpath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\全链路-点问搜题\6月\粗框图'
-    url = 'http://47.112.238.105:8014/pointquestion-app/app/topicProcess/searchDifficultProblems'
+    testpath = r'\\172.28.2.84\kf2share1\AIData\业务全链路\智慧小布\全链路-点问搜题\11月\PointAndAskFile\粗框图'
+    url = 'http://pointquestion.eebbk.net/pointquestion-app/app/topicProcess/searchDifficultProblems'
+    # url = 'http://47.112.238.105:8014/pointquestion-app/app/topicProcess/searchDifficultProblems'
     header = {'machineId': '700S593001AE5', 'accountId': '37511587', 'apkPackageName': 'com.eebbk.aisearch.fingerstyle',
               'apkVersionCode': '4040000', 'apkVersionName': 'V4.4.0.0', 'deviceModel': 'S5',
               'deviceOSVersion': 'V1.0.0_180409'}
-    key = 'QuestionData_70S5C9B0534AM_QuestionData20200530181642_543_217_70S5C9B0534AM.jpg'
+    key = 'QuestionData20201119091946_489_217_700S5940013F0_material_PAAPhoto_70S5C08007836_PAAPhoto20201117120138_1001_1118_1566_2448_3264.jpg'
     with open(os.path.join(testpath,
                            key),
               'rb') as f:
@@ -232,16 +234,24 @@ def test():
     ordx_y = key.split('_')
     t1 = time.time()
     result = requests.post(url=url, headers=header, files=file,
-                           params={'xPoint': ordx_y[-3], 'yPoint': ordx_y[-2], 'isLimitTimes': '0'})
+                           params={'xPoint': ordx_y[-4], 'yPoint': ordx_y[-3], 'isLimitTimes': '0'})
     print('请求耗时',str(result.elapsed.seconds))
     t2 = time.time()
     print('相减时间',t2 - t1)
     print(result.text)
     if 'questionListId' in result.text:
         objdata = demjson.decode(result.text)
+        fstquesitons = DESCoder.decryption_Q_py(objdata['data']['questions'])
+        # fstquesitons_origi = decryptorUtil.decryption_Q(objdata['data']['questions'])
+        if 'questionId' in fstquesitons:
+            FstQuesitonList = [str(fstquesitons['questionId'])]
+            # FstQuesitonList_origi = [str(fstquesitons['questionId'])]
         if objdata['data']:
             if objdata['data']['questionListId']:
-                print(result.text)
+                decodequestionlist = DESCoder.decryption_Qids_py(objdata['data']['questionListId'])
+                # decodequestionlist_origi = decryptorUtil.decryption_Qids(objdata['data']['questionListId'])
+                print('原',FstQuesitonList+decodequestionlist)
+                # print('现在', FstQuesitonList_origi + decodequestionlist_origi)
             else:
                 print('questionListId返回数据为空')
     else:
@@ -249,9 +259,9 @@ def test():
 
 
 if __name__ == "__main__":
-    # test()
-    piccunt = searchDifficultProblems()
-    writeExcel(piccunt)
-    shutdownJVM()
+    test()
+    # piccunt = searchDifficultProblems()
+    # writeExcel(piccunt)
+    # shutdownJVM()
     # execute_sql()
 
